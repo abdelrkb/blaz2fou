@@ -6,7 +6,7 @@
 echo '
 <title>Connexion </title>
 </head>
-<body>
+<body class="formu" >
 <div class="login-container">
     <h2>Se Connecter</h2>
     <form class="login-form" action="signin.php" method="post">
