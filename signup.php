@@ -6,7 +6,7 @@
 echo '
 <title>Créer un compte </title>
 </head>
-<body>
+<body class="formu">
 <div class="login-container">
     <h2>Créer un compte </h2>
     <form class="login-form">
