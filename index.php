@@ -5,16 +5,41 @@ include_once('connexion.php');
 
 $toastMessage = '';
 
+
+
 // Vérifier si le formulaire a été soumis
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['blaze'])) {
-    $blazeBlaze = $_POST['blaze'];
-    $userId = '1'; // Ou une autre source pour l'userId
-    $dateBlaze = date('Y-m-d');
 
+    // Vérifier si l'utilisateur est connecté
+    if (!isset($_SESSION['user_id'])) {
+        // Rediriger vers la page de connexion
+        header("Location: signin.php");
+        exit();
+    }
+    $blazeBlaze = $_POST['blaze'];
+    $userId = $_SESSION['user_id']; // Utiliser l'ID de l'utilisateur connecté
+    $dateBlaze = date('Y-m-d');
 
     // Vérifier la connexion
     if ($conn->connect_error) {
         die("Connection failed: " . $conn->connect_error);
+    }
+
+    $query = 'SELECT fb_name FROM forbidden_blaze';
+    $result = $conn->query($query);
+
+    $forbidden_word = [];
+    while ($row = $result->fetch_assoc()) {
+        $forbidden_word[] = $row['fb_name'];
+    }
+
+    // Vérifier si le blaze contient des mots interdits
+    foreach ($forbidden_word as $word) {
+        if (stripos($blazeBlaze, $word) !== false) {
+            $_SESSION['toastMessage'] = "Le blaze contient un mot interdit.";
+            header("Location: index.php");
+            exit();
+        }
     }
 
     // Vérifier si le blaze existe déjà
@@ -51,8 +76,6 @@ if (isset($_SESSION['toastMessage'])) {
 }
 include_once('head.php');
 ?>
-
-
 
 <main class="container">
     <form action="index.php" method="post" class="my-4">

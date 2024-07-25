@@ -33,16 +33,57 @@ $(document).ready(function() {
         "columns": [
             { "data": "blaze" },
             { "data": "date" },
-            { "data": "note" },
+            { 
+                "data": "note",
+                "render" : function(data, type, row) {
+                    return `<div class='bouton-note'>${data}/10 <button class="btn-rate" data-id="${row.id}" data-note="${row.user_note}"><i class="fa-solid fa-pen"></i></button><div>`;
+                }
+            },
             { "data": "user" }
         ],
         "language": {
             "url": "files/French.json" // Assurez-vous que ce chemin est correct
-        }
+        }, 
+        "autoWidth": false,  // Ajoutez cette ligne
+        "responsive": true   // Ajoutez cette ligne
+    });
+
+    $('#blazeTable tbody').on('click', '.btn-rate', function() {
+        var blazeId = $(this).data('id');
+        var userNote = $(this).data('note');
+        var currentNoteText = userNote > 0 ? `Vous avez donné une note de ${userNote}.` : 'Vous n\'avez pas encore noté ce blaze.';
+
+        Swal.fire({
+            title: 'Donnez votre note',
+            text: currentNoteText,
+            input: 'number',
+            inputAttributes: {
+                min: 1,
+                max: 5,
+                step: 1
+            },
+            inputValue: userNote,
+            showCancelButton: true,
+            confirmButtonText: 'Valider',
+            cancelButtonText: 'Annuler'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.post('submit_note.php', {
+                    blaze_id: blazeId,
+                    note: result.value
+                }, function(response) {
+                    if(response.success) {
+                        Swal.fire('Merci!', 'Votre note a été enregistrée.', 'success');
+                        $('#blazeTable').DataTable().ajax.reload();
+                    }
+                }, 'json');
+            }
+        });
     });
 });
 
 </script>
 
 </body>
+<script src="https://kit.fontawesome.com/f9983d149e.js" crossorigin="anonymous"></script></body>
 </html>

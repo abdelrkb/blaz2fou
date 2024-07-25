@@ -234,6 +234,32 @@ table {
   border-top: 1px solid #ddd;
 }
 
+.table-responsive {
+  overflow-x: inherit !important;
+}
+
+.bouton-note {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn-rate {
+  margin-left: 10px;
+  padding: 5px 10px;
+  background-color: var(--purple-color);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 20%;
+}
+
+.btn-rate:hover {
+  background-color: var(--hover-color);
+}
+
+
 @media (max-width: 768px) {
   .table-responsive {
     border: 0;
