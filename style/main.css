@@ -55,7 +55,7 @@ a {
   height: 75px; /* Ajustez selon la taille de votre logo */
 }
 
-form {
+/* form {
   background: var(--form-background-color);
   padding: 2rem;
   border-radius: 10px;
@@ -93,7 +93,7 @@ form button {
 
 form button:hover {
   background: linear-gradient(45deg, var(--button-hover-color), var(--purple-color));
-}
+} */
 
 /* Utilisez FontAwesome pour les icônes */
 .fa-solid {

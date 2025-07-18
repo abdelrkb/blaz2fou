@@ -1,3 +1,8 @@
+<?php
+session_start();
+?>
+
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -15,14 +20,3 @@
 </head>
 
 <body>
-
-<header>
-    <div class="navbar">
-        <a href="index.php"><img src="image/logo.png" alt="Logo" class="logo"></a>
-        <div class="navbar-icons">
-            <a href="index.php"><i class="fa-solid fa-pen-to-square"></i></a>
-            <a href="leaderboard.php"><i class="fa-solid fa-list"></i></a>
-            <a href="#"><i class="fa-solid fa-user"></i></a>
-        </div>
-    </div>
-</header>

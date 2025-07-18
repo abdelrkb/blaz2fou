@@ -1,0 +1,4 @@
+2024-05-18 16:41:56 - Script started
+2024-05-18 16:41:56 - Connection successful
+2024-05-18 16:41:56 - Records found: 13
+2024-05-18 16:41:56 - Returning JSON data
