@@ -1,44 +1,84 @@
 <?php include_once('head.php'); ?>
-<link rel="stylesheet" href="style/leaderboard.css">
 
-<div class="feed-container">
-
-    <!-- Page Header -->
-    <div class="page-header">
-        <h1><i class="fas fa-fire"></i>Blaze2Fou</h1>
-        <p>Découvrez tous les blazes de tarté de la communauté</p>
-    </div>
-
-    <div class="add-blaze-wrapper">
-        <button id="toggleAddBtn" class="add-btn">Ajouter</button>
-
-        <form id="addBlazeForm" class="add-form">
-            <input type="text" id="newBlazeInput" placeholder="Entre ton blaze là" class="add-input" />
-            <button type="submit" class="add-submit"><i class="fa-solid fa-paper-plane"></i></button>
-        </form>
-    </div>
-
-    <!-- Loading Spinner -->
-    <div id="loadingSpinner" class="loading-spinner">
-        <div class="spinner"></div>
-    </div>
-
-    <!-- Blaze Feed -->
-    <div id="blazeFeed" class="blaze-feed" style="display: none;"></div>
-
-    <!-- Empty State -->
-    <div id="emptyState" class="empty-state" style="display: none;">
-        <i class="fas fa-fire-alt"></i>
-        <h3>Aucun blaze trouvé</h3>
-        <p>Soyez le premier à partager votre blaze !</p>
-    </div>
-
-    <!-- Load More Button -->
-    <button id="loadMoreBtn" class="load-more-btn" style="display: none;">
-        <i class="fas fa-plus"></i> Charger plus de blazes
-    </button>
-
+<!-- Page Header -->
+<div class="page-header">
+    <h1><i class="fas fa-fire"></i>Blaze2Fou</h1>
+    <p>Découvrez tous les blazes de tarté de la communauté</p>
 </div>
+
+<div class="page-layout">
+
+    <!-- Colonne gauche : contrôles -->
+    <aside class="sidebar-left">
+        <div class="feed-controls">
+            <div class="search-box">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="searchInput" class="search-input" placeholder="Rechercher un blaze ou un pseudo...">
+            </div>
+            <div class="sort-controls">
+                <button class="sort-btn active" data-sort="date" data-order="desc">🕒 Récent</button>
+                <button class="sort-btn" data-sort="note" data-order="desc">⭐ Mieux notés</button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Colonne centrale : feed principal -->
+    <main class="feed-center">
+        <div class="feed-container">
+            <div class="feed-container">
+
+            <div class="add-blaze-wrapper">
+                <button id="toggleAddBtn" class="add-btn">Ajouter</button>
+
+                <form id="addBlazeForm" class="add-form">
+                    <input type="text" id="newBlazeInput" placeholder="Entre ton blaze là" class="add-input" />
+                    <button type="submit" class="add-submit"><i class="fa-solid fa-paper-plane"></i></button>
+                </form>
+            </div>
+
+            <!-- Loading Spinner -->
+            <div id="loadingSpinner" class="loading-spinner">
+                <div class="spinner"></div>
+            </div>
+
+            <!-- Blaze Feed -->
+            <div id="blazeFeed" class="blaze-feed" style="display: none;"></div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <i class="fas fa-fire-alt"></i>
+                <h3>Aucun blaze trouvé</h3>
+                <p>Soyez le premier à partager votre blaze !</p>
+            </div>
+
+            <!-- Load More Button -->
+            <button id="loadMoreBtn" class="load-more-btn" style="display: none;">
+                <i class="fas fa-plus"></i> Charger plus de blazes
+            </button>
+
+        </div>
+        </div>
+    </main>
+
+    <!-- Colonne droite : top blazes -->
+    <aside class="sidebar-right">
+        <div class="top-blazes-box">
+            <div class="top-blazes-header">
+                <span>🏆 Top Blazes</span>
+                <select id="topBlazePeriod">
+                <option value="day">Jour</option>
+                <option value="month">Mois</option>
+                <option value="year">Année</option>
+                <option value="all">All time</option>
+                </select>
+            </div>
+            <ul id="topBlazesList">
+                <!-- Liste chargée dynamiquement -->
+            </ul>
+        </div>
+    </aside>
+</div>
+
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
@@ -49,6 +89,28 @@ $(document).ready(function () {
     let filteredBlazes = [];
     let currentSort = 'date';
     let currentOrder = 'desc';
+
+    function loadTopBlazes(period = "day") {
+        $.ajax({
+            url: "get_top_blazes.php",
+            type: "GET",
+            data: { period: period },
+            dataType: "json",
+            success: function (data) {
+            const list = $("#topBlazesList");
+            list.empty();
+
+            data.forEach(blaze => {
+                list.append(`<li>${escapeHtml(blaze.blazeBlaze || '')} <span>${parseFloat(blaze.blazeNote).toFixed(1)}</span></li>`);
+            });
+            },
+            error: function () {
+            Swal.fire("Erreur", "Impossible de charger les top blazes", "error");
+            }
+        });
+    }
+
+
 
     function loadBlazes(page = 1, append = false) {
         if (isLoading) return;
@@ -196,7 +258,12 @@ $(document).ready(function () {
         loadBlazes(1, false);
     });
 
-    $('#refreshBtn').on('click', () => loadBlazes(1, false));
+    $("#topBlazePeriod").on("change", function () {
+        const selectedPeriod = $(this).val();
+        loadTopBlazes(selectedPeriod);
+    });
+
+
     $('#loadMoreBtn').on('click', () => loadBlazes(++currentPage, true));
 
     $(document).on('click', '.emoji-choices-footer .emoji-option', function () {
@@ -237,22 +304,47 @@ $(document).ready(function () {
                 $('#addBlazeForm').hide();
                 $('#toggleAddBtn').show();
                 loadBlazes(1, false);
+
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Blaze ajouté avec succès !',
+                    showConfirmButton: false,
+                    timer: 2000,
+                    timerProgressBar: true
+                });
             } else {
-                let msg = "Erreur : ";
+                let msg = '';
                 switch (response.error) {
                     case "non_connecté":
-                        msg += "Connecte-toi d’abord.";
+                        msg = "Tu dois être connecté pour ajouter un blaze.";
                         break;
                     case "Mot interdit détecté.":
+                        msg = "Ce blaze contient un mot interdit.";
+                        break;
                     case "Ce blaze existe déjà.":
+                        msg = "Ce blaze a déjà été proposé.";
+                        break;
                     case "Erreur à l’insertion":
-                        msg += response.error;
+                        msg = "Impossible d’ajouter le blaze pour l’instant.";
                         break;
                     default:
-                        msg += "Une erreur est survenue.";
+                        msg = "Une erreur inattendue est survenue.";
                 }
-                alert(msg);
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erreur',
+                    text: msg,
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    if (response.error === "non_connecté") {
+                        window.location.href = 'signin.php';
+                    }
+                });
             }
+
         }, 'json');
     });
 
@@ -271,6 +363,7 @@ $(document).ready(function () {
 
 
     loadBlazes();
+    loadTopBlazes();
 });
 </script>
 

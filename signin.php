@@ -46,7 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <title>Connexion</title>
-    <link rel="stylesheet" href="style/main.css">
+    <link rel="stylesheet" href="style/connexion.css">
 </head>
 <body class="formu">
 <div class="login-container">
@@ -63,8 +63,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
         <button type="submit">Connexion</button>
         <div class="form-footer">
-            <a href="#">Vous avez oublié votre mot de passe ?</a>
-            <a href="signup.php">Vous n'avez pas de compte ? Créez en un.</a>
+            <a class="forgot-password" href="#">Vous avez oublié votre mot de passe ?</a>
+            <a class="forgot-password" href="signup.php">Vous n'avez pas de compte ? Créez en un.</a>
         </div>
     </form>
 </div>

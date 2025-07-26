@@ -68,7 +68,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <title>Créer un compte</title>
-    <link rel="stylesheet" href="style/main.css">
+    <link rel="stylesheet" href="style/connexion.css">
 </head>
 <body class="formu">
 <div class="login-container">
